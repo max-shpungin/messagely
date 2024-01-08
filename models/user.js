@@ -39,7 +39,7 @@ class User {
     const result = await db.query(
       `SELECT password
           FROM users
-          WHERE username = $1`, 
+          WHERE username = $1`,
         [username]);
 
     const user = result.rows[0];
@@ -101,7 +101,24 @@ class User {
    */
 
   static async messagesFrom(username) {
-    
+
+    // WITH to_user AS (
+    //   SELECT  username,
+    //           first_name,
+    //           last_name,
+    //           phone
+    //     FROM users
+    // )
+
+    const result = db.query(`
+
+    SELECT m.id, u.username, m.body, m.sent_at, m.read_at
+    FROM users as u
+      JOIN messages as m
+        ON u.username = m.from_username
+      WHERE username = $1`,
+      [username])
+
   }
 
   /** Return messages to this user.
@@ -113,6 +130,16 @@ class User {
    */
 
   static async messagesTo(username) {
+
+    const result = db.query(`
+
+    SELECT m.id, u.username, m.body, m.sent_at, m.read_at
+    FROM users as u
+      JOIN messages as m
+        ON u.username = m.to_username
+      WHERE username = $1`,
+      [username])
+
   }
 }
 
