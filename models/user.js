@@ -55,6 +55,11 @@ class User {
   /** Update last_login_at for user */
 
   static async updateLoginTimestamp(username) {
+    await db.query(
+      `UPDATE users
+          SET last_login_at = $1
+          WHERE username = $2`,
+        [Date.now(), username]);
   }
 
   /** All: basic info on all users:
