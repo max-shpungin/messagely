@@ -102,22 +102,29 @@ class User {
 
   static async messagesFrom(username) {
 
-    // WITH to_user AS (
-    //   SELECT  username,
-    //           first_name,
-    //           last_name,
-    //           phone
-    //     FROM users
-    // )
+    const result = await db.query(`
+          SELECT
+              m.id,
+              to_user.username,
+              to_user.first_name,
+              to_user.last_name,
+              to_user.phone,
+              m.body,
+              m.sent_at,
+              m.read_at
 
-    const result = db.query(`
+          FROM users as u
+          JOIN messages as m ON
+              u.username = m.from_username
+          JOIN users as to_user on
+              m.to_username = to_user.username
+          WHERE u.username = $1
+          ORDER BY m.sent_at DESC`,
+          [username])
 
-    SELECT m.id, u.username, m.body, m.sent_at, m.read_at
-    FROM users as u
-      JOIN messages as m
-        ON u.username = m.from_username
-      WHERE username = $1`,
-      [username])
+      //need to format json
+
+      return result.rows;
 
   }
 
