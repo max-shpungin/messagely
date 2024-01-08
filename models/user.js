@@ -1,4 +1,8 @@
 "use strict";
+const { NotFoundError } = require("../expressError");
+const db = require("../db");
+const bcrypt = require("bcrypt");
+const BCRYPT_WORK_FACTOR = require("./config")
 
 /** User of the site. */
 
@@ -9,6 +13,24 @@ class User {
    */
 
   static async register({ username, password, first_name, last_name, phone }) {
+
+    const hashed_pw = bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+
+    const result = await db.query(`
+      INSERT INTO users ( username,
+                          password,
+                          first_name,
+                          last_name,
+                          phone)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING username, password, first_name, last_name, phone
+    `,[username,
+      hashed_pw,
+      first_name,
+      last_name,
+      phone]);
+
+    return result.rows[0]; //TODO: return instance of User vs db query?
   }
 
   /** Authenticate: is username/password valid? Returns boolean. */
