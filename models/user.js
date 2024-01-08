@@ -57,9 +57,9 @@ class User {
   static async updateLoginTimestamp(username) {
     await db.query(
       `UPDATE users
-          SET last_login_at = $1
-          WHERE username = $2`,
-        [Date.now(), username]);
+          SET last_login_at = current_timestamp
+          WHERE username = $1`,
+        [username]);
   }
 
   /** All: basic info on all users:
@@ -101,6 +101,7 @@ class User {
    */
 
   static async messagesFrom(username) {
+    
   }
 
   /** Return messages to this user.
