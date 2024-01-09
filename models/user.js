@@ -15,34 +15,22 @@ class User {
   static async register({ username, password, first_name, last_name, phone }) {
 
     const hashed_pw = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    //console.log("got up to this point");
-    // const result = await db.query(
-    //   `INSERT INTO users (username,
-    //                       password,
-    //                       first_name,
-    //                       last_name,
-    //                       phone,
-    //                       join_at = current_timestamp)
-    //       VALUES ($1, $2, $3, $4, $5)
-    //       RETURNING username, password, first_name, last_name, phone`,
-    //   [username,
-    //   hashed_pw,
-    //   first_name,
-    //   last_name,
-    //   phone]);
+    
+    const result = await db.query(
+      `INSERT INTO users (username,
+                          password,
+                          first_name,
+                          last_name,
+                          phone,
+                          join_at)
+          VALUES ($1, $2, $3, $4, $5, current_timestamp)
+          RETURNING username, password, first_name, last_name, phone`,
+      [username,
+      hashed_pw,
+      first_name,
+      last_name,
+      phone]);
 
-    const result = await db.query(`
-      INSERT INTO users
-        (username, password, first_name, last_name, phone, join_at)
-        VALUES ($1, $2, $3, $4, $5, current_timestamp)
-        RETURNING username, password, first_name, last_name, phone`,
-      [username, hashed_pw, first_name, last_name, phone]);
-
-    // const result = await db.query(`select * from users`);
-   // console.log(result);
-   // debugger;
-  //  console.log("got up to this point too");
-   // console.log(result.rows);
     return result.rows[0]; //TODO: return instance of User vs db query?
   }
 
@@ -154,7 +142,7 @@ class User {
 
   static async messagesTo(username) {
 
-    const result = db.query(`
+    const result = await db.query(`
 
     SELECT m.id, u.username, m.body, m.sent_at, m.read_at
     FROM users as u
