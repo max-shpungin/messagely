@@ -56,22 +56,26 @@ class User {
   /** Update last_login_at for user */
 
   static async updateLoginTimestamp(username) {
-    await db.query(
+    const result = await db.query(
       `UPDATE users
           SET last_login_at = current_timestamp
-          WHERE username = $1`,
+          WHERE username = $1
+          RETURNING username`,
       [username]);
+
+    const user = result.rows[0];
+    if (!user) throw new NotFoundError();
   }
 
   /** All: basic info on all users:
    * [{username, first_name, last_name}, ...] */
 
   static async all() {
-    const results = await db.query(
+    const result = await db.query(
       `SELECT username, first_name, last_name
           FROM users`);
 
-    return results.rows;
+    return result.rows;
   }
 
   /** Get: get user by username
@@ -85,13 +89,15 @@ class User {
 
   static async get(username) {
 
-    const results = await db.query(
+    const result = await db.query(
       `SELECT username, first_name, last_name, phone, join_at, last_login_at
           FROM users
           WHERE username = $1`,
       [username]);
     
-    return results.rows[0];
+    const user = result.rows[0];
+    if (!user) throw new NotFoundError();
+    return user;
   }
 
   /** Return messages from this user.
@@ -129,7 +135,8 @@ class User {
         // const {id, body, sent_at, read_at, ...to_user} = row;
         return { id, to_user, body, sent_at, read_at };
       });
-
+    
+    if (!messages) throw new NotFoundError();
     return messages;
   }
 
@@ -168,9 +175,9 @@ class User {
       .map(({ id, body, sent_at, read_at, ...from_user }) => {
         return { id, from_user, body, sent_at, read_at };
       });
-
+    
+    if (!messages) throw new NotFoundError();
     return messages;
-
   }
 }
 
