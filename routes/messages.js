@@ -19,20 +19,22 @@ const { UnauthorizedError } = require("../expressError");
  * Makes sure that the currently-logged-in users is either the to or from user.
  *
  **/
-router.get("/:id", 
+router.get("/:id",
   ensureLoggedIn,
-  
-  async function(req, res, next) {
+
+  async function (req, res, next) {
     const message = await Message.get(req.params.id);
     const { from_user, to_user } = message;
-    
+
     const user = res.locals.user;
-    
-    if (user.username === from_user.username || user.username === to_user.username ) {
+
+    if (user.username === from_user.username ||
+      user.username === to_user.username) {
       return res.json({ message });
     }
+
     throw new UnauthorizedError();
-});
+  });
 
 
 /** POST / - post message.
@@ -41,6 +43,17 @@ router.get("/:id",
  *   {message: {id, from_username, to_username, body, sent_at}}
  *
  **/
+
+router.post('/', ensureLoggedIn, async function (req, res, next) {
+
+  const from_username = res.locals.user.username;
+  const { to_username, body } = req.body;
+
+  const message = await Message.create({ from_username, to_username, body });
+
+  return res.json({ message });
+
+});
 
 
 /** POST/:id/read - mark message as read:

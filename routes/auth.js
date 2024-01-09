@@ -14,12 +14,12 @@ router.post('/login', async function (req, res, next) {
   if (req.body === undefined) throw new BadRequestError();
   const { username, password } = req.body;
 
-  debugger;
-
   if (await User.authenticate(username, password) === true) {
     const token = jwt.sign({ username }, SECRET_KEY);
     return res.json({ token });
   }
+
+  //TODO: should this also store the token in req.res.locals!?
 
   //TODO: Do we need to update the login timestamp in this route?
 
