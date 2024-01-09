@@ -2,7 +2,7 @@
 const { NotFoundError } = require("../expressError");
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const { BCRYPT_WORK_FACTOR } = require("../config")
+const { BCRYPT_WORK_FACTOR } = require("../config");
 
 /** User of the site. */
 
@@ -13,25 +13,36 @@ class User {
    */
 
   static async register({ username, password, first_name, last_name, phone }) {
-    
-    const hashed_pw = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    console.log("got up to this point");
-    const result = await db.query(
-      `INSERT INTO users (username,
-                          password,
-                          first_name,
-                          last_name,
-                          phone,
-                          join_at = current_timestamp)
-          VALUES ($1, $2, $3, $4, $5)
-          RETURNING username, password, first_name, last_name, phone`,
-      [username,
-      hashed_pw,
-      first_name,
-      last_name,
-      phone]);
-      console.log("got up to this point too");
 
+    const hashed_pw = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    //console.log("got up to this point");
+    // const result = await db.query(
+    //   `INSERT INTO users (username,
+    //                       password,
+    //                       first_name,
+    //                       last_name,
+    //                       phone,
+    //                       join_at = current_timestamp)
+    //       VALUES ($1, $2, $3, $4, $5)
+    //       RETURNING username, password, first_name, last_name, phone`,
+    //   [username,
+    //   hashed_pw,
+    //   first_name,
+    //   last_name,
+    //   phone]);
+
+    const result = await db.query(`
+      INSERT INTO users
+        (username, password, first_name, last_name, phone, join_at)
+        VALUES ($1, $2, $3, $4, $5, current_timestamp)
+        RETURNING username, password, first_name, last_name, phone`,
+      [username, hashed_pw, first_name, last_name, phone]);
+
+    // const result = await db.query(`select * from users`);
+   // console.log(result);
+   // debugger;
+  //  console.log("got up to this point too");
+   // console.log(result.rows);
     return result.rows[0]; //TODO: return instance of User vs db query?
   }
 
@@ -42,7 +53,7 @@ class User {
       `SELECT password
           FROM users
           WHERE username = $1`,
-        [username]);
+      [username]);
 
     const user = result.rows[0];
 
@@ -61,7 +72,7 @@ class User {
       `UPDATE users
           SET last_login_at = current_timestamp
           WHERE username = $1`,
-        [username]);
+      [username]);
   }
 
   /** All: basic info on all users:
@@ -89,7 +100,7 @@ class User {
       `SELECT username, first_name, last_name, phone, join_at, last_login_at
           FROM users
           WHERE username = $1`
-        [username]);
+      [username]);
 
     return results.rows[0];
   }
@@ -122,15 +133,15 @@ class User {
               m.to_username = to_user.username
           WHERE u.username = $1
           ORDER BY m.sent_at DESC`,
-          [username])
+      [username]);
 
-      const messages = result.rows
-        .map(({id, body, sent_at, read_at, ...to_user}) => {
-          // const {id, body, sent_at, read_at, ...to_user} = row;
-          return {id, to_user, body, sent_at, read_at};
-        });
+    const messages = result.rows
+      .map(({ id, body, sent_at, read_at, ...to_user }) => {
+        // const {id, body, sent_at, read_at, ...to_user} = row;
+        return { id, to_user, body, sent_at, read_at };
+      });
 
-      return messages;
+    return messages;
   }
 
   /** Return messages to this user.
@@ -150,7 +161,7 @@ class User {
       JOIN messages as m
         ON u.username = m.to_username
       WHERE username = $1`,
-      [username])
+      [username]);
 
   }
 }
