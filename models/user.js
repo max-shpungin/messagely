@@ -37,6 +37,8 @@ class User {
   /** Authenticate: is username/password valid? Returns boolean. */
 
   static async authenticate(username, password) {
+
+    debugger;
     const result = await db.query(
       `SELECT password
           FROM users
