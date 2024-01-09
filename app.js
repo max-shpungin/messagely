@@ -19,7 +19,6 @@ app.use(cors());
 
 // get auth token for all routes
 app.use(authenticateJWT);
-debugger;
 
 /** routes */
 

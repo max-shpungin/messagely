@@ -19,10 +19,7 @@ const { UnauthorizedError } = require("../expressError");
  * Makes sure that the currently-logged-in users is either the to or from user.
  *
  **/
-router.get("/:id",
-  ensureLoggedIn,
-
-  async function (req, res, next) {
+router.get("/:id", ensureLoggedIn, async function (req, res, next) {
     const message = await Message.get(req.params.id);
     const { from_user, to_user } = message;
 

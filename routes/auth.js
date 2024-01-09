@@ -19,8 +19,6 @@ router.post('/login', async function (req, res, next) {
     return res.json({ token });
   }
 
-  //TODO: should this also store the token in req.res.locals!?
-
   //TODO: Do we need to update the login timestamp in this route?
 
   throw new UnauthorizedError("Invalid user/password");
@@ -38,12 +36,11 @@ router.post('/register', async function (req, res, next) {
 
   const { username, password, first_name, last_name, phone } = req.body;
 
-  console.log("before new_user");
   await User.register({username,password,first_name,last_name,phone});
 
   if (await User.authenticate(username, password) === true) {
     const token = jwt.sign({ username }, SECRET_KEY);
-    console.log(token);
+    
     return res.json({ token });
 
   }
