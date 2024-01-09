@@ -42,6 +42,7 @@ INSERT INTO messages (
 VALUES ('janedoe', 'johnsmith', 'Hi John!', '2023-12-25 12:30', '2024-1-25 12:30'),
 ('janedoe', 'johnsmith', 'Hi John PLEASE ANSWER!', '2023-12-25 12:30', '2024-1-25 12:30'),
 ('janedoe', 'johnsmith', 'JOOOOOOOOOOOOOOOOHN!', '2023-12-25 12:30', '2024-1-25 12:30'),
+('stitch', 'johnsmith', 'JOOOOOOOOOOOOOOOOHN YOu SUXK!', '2023-12-25 12:30', '2024-1-25 12:30'),
 ('johnsmith', 'janedoe', 'sup', '2024-1-25 12:30', '2024-1-25 12:35');
 
 
