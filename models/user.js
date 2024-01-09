@@ -136,7 +136,6 @@ class User {
         return { id, to_user, body, sent_at, read_at };
       });
 
-    if (!messages) throw new NotFoundError();
     return messages;
   }
 
@@ -176,7 +175,6 @@ class User {
         return { id, from_user, body, sent_at, read_at };
       });
 
-    if (!messages) throw new NotFoundError();
     return messages;
   }
 }
