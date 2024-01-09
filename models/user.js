@@ -84,12 +84,13 @@ class User {
    *          last_login_at } */
 
   static async get(username) {
+
     const results = await db.query(
       `SELECT username, first_name, last_name, phone, join_at, last_login_at
           FROM users
-          WHERE username = $1`
+          WHERE username = $1`,
       [username]);
-
+    
     return results.rows[0];
   }
 
@@ -142,14 +143,33 @@ class User {
 
   static async messagesTo(username) {
 
+ 
     const result = await db.query(`
+          SELECT
+              m.id,
+              from_user.username,
+              from_user.first_name,
+              from_user.last_name,
+              from_user.phone,
+              m.body,
+              m.sent_at,
+              m.read_at
 
-    SELECT m.id, u.username, m.body, m.sent_at, m.read_at
-    FROM users as u
-      JOIN messages as m
-        ON u.username = m.to_username
-      WHERE username = $1`,
-      [username]);
+          FROM users as u
+          JOIN messages as m ON
+              u.username = m.to_username
+          JOIN users as from_user on
+              m.from_username = from_user.username
+          WHERE u.username = $1
+          ORDER BY m.sent_at DESC`,
+      [username]);``
+
+    const messages = result.rows
+      .map(({ id, body, sent_at, read_at, ...from_user }) => {
+        return { id, from_user, body, sent_at, read_at };
+      });
+
+    return messages;
 
   }
 }
