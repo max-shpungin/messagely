@@ -122,10 +122,13 @@ class User {
           ORDER BY m.sent_at DESC`,
           [username])
 
-      //need to format json
+      const messages = result.rows
+        .map(({id, body, sent_at, read_at, ...to_user}) => {
+          // const {id, body, sent_at, read_at, ...to_user} = row;
+          return {id, to_user, body, sent_at, read_at};
+        });
 
-      return result.rows;
-
+      return messages;
   }
 
   /** Return messages to this user.
