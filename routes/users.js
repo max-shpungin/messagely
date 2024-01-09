@@ -29,10 +29,10 @@ router.get('/', ensureLoggedIn, async function (req, res, next) {
 
 router.get('/:username',
   ensureLoggedIn,
-  ensureCorrectUser,
+  ensureCorrectUser, //TODO: this also checks in someone is logged in, ensureLoggedIn redundant
   async function (req, res, next) {
 
-    const user = await User.get();
+    const user = await User.get(); //FIXME: needs username in User.get arg
     return res.json({ user });
   });
 
@@ -47,9 +47,9 @@ router.get('/:username',
  *
  **/
 
-router.get('/:username/to',
+router.get('/:username/to', 
   ensureLoggedIn,
-  ensureCorrectUser,
+  ensureCorrectUser, //TODO: this also checks in someone is logged in, ensureLoggedIn redundant
   async function (req, res, next) {
     const messages = await User.messagesTo(req.params.username);
 
@@ -69,7 +69,7 @@ router.get('/:username/to',
 
 router.get('/:username/from',
   ensureLoggedIn,
-  ensureCorrectUser,
+  ensureCorrectUser, //TODO: this also checks in someone is logged in, ensureLoggedIn redundant
   async function (req, res, next) {
     const messages = await User.messagesFrom(req.params.username);
 

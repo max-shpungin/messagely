@@ -19,7 +19,7 @@ router.post('/login', async function (req, res, next) {
     return res.json({ token });
   }
 
-  //TODO: Do we need to update the login timestamp in this route?
+  //TODO: Do we need to update the login timestamp in this route? -- Yes
 
   throw new UnauthorizedError("Invalid user/password");
 
@@ -39,13 +39,13 @@ router.post('/register', async function (req, res, next) {
   await User.register({username,password,first_name,last_name,phone});
 
   if (await User.authenticate(username, password) === true) {
-    const token = jwt.sign({ username }, SECRET_KEY);
+    const token = jwt.sign({ username }, SECRET_KEY); //TODO: only need this from User.register
     
-    return res.json({ token });
+    return res.json({ token }); //TODO: update logintimestamp as well
 
   }
 
-  throw new UnauthorizedError("Invalid user/password");
+  throw new UnauthorizedError("Invalid user/password"); //TODO: if an err happens, not the right error -- if db err, should be in Models
 });
 
 module.exports = router;

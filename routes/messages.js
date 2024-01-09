@@ -30,7 +30,7 @@ router.get("/:id", ensureLoggedIn, async function (req, res, next) {
       return res.json({ message });
     }
 
-    throw new UnauthorizedError();
+    throw new UnauthorizedError(); //TODO: add custom message to this err
   });
 
 
@@ -66,13 +66,13 @@ router.post('/:id/read', ensureLoggedIn, async function (req, res, next) {
   let message = await Message.get(req.params.id);
     const {to_user } = message;
 
-    const user = res.locals.user;
+    const user = res.locals.user; //TODO: rename to current_user
 
     if (user.username === to_user.username) {
       message = await Message.markRead(req.params.id);
       return res.json({ message });
     }
-
+  //TODO: throw UnauthorizedError for else condition
 });
 
 module.exports = router;
