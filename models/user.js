@@ -15,7 +15,7 @@ class User {
   static async register({ username, password, first_name, last_name, phone }) {
 
     const hashed_pw = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    
+
     const result = await db.query(
       `INSERT INTO users (username,
                           password,
@@ -94,7 +94,7 @@ class User {
           FROM users
           WHERE username = $1`,
       [username]);
-    
+
     const user = result.rows[0];
     if (!user) throw new NotFoundError();
     return user;
@@ -135,7 +135,7 @@ class User {
         // const {id, body, sent_at, read_at, ...to_user} = row;
         return { id, to_user, body, sent_at, read_at };
       });
-    
+
     if (!messages) throw new NotFoundError();
     return messages;
   }
@@ -150,7 +150,7 @@ class User {
 
   static async messagesTo(username) {
 
- 
+
     const result = await db.query(`
           SELECT
               m.id,
@@ -175,7 +175,7 @@ class User {
       .map(({ id, body, sent_at, read_at, ...from_user }) => {
         return { id, from_user, body, sent_at, read_at };
       });
-    
+
     if (!messages) throw new NotFoundError();
     return messages;
   }
